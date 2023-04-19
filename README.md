@@ -49,6 +49,8 @@ Retrieves all the parsed transactions for the given address
 ## Testing
 
 you run the test using the Makefile
-test has been added for the api and the ethClient at a basic level so it showcases, more tests would be added as well as test for every service something that is not included in this take home assignment
+
+test has been added for the api and the ethClient at a basic level so it showcases the thought and technique,
+more tests would be added normally to test edge cases etc as well test for every service something that is not included in this take home assignment
 
     make test
