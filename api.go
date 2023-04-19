@@ -7,7 +7,7 @@ import (
 )
 
 type HttpHandlers struct {
-	service service
+	service Service
 }
 
 func (h *HttpHandlers) GetCurrentBlock(w http.ResponseWriter, r *http.Request) {
@@ -55,10 +55,19 @@ func (h *HttpHandlers) GetTransactions(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func NewHandlers(service service) HttpHandlers {
+func NewHTTPHandlers(service Service) HttpHandlers {
 	return HttpHandlers{
 		service: service,
 	}
+}
+
+func CreateAPIMux(h HttpHandlers) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/subscribe", h.Subscribe)
+	mux.HandleFunc("/getCurrentBlock", h.GetCurrentBlock)
+	mux.HandleFunc("/getTransactions", h.GetTransactions)
+
+	return mux
 }
 
 const addressParam = "address"

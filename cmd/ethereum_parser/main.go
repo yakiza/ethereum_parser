@@ -47,13 +47,10 @@ func main() {
 	ethereumClient := ethereum_parser.NewEthereumClient(ethConfig)
 	repo := ethereum_parser.NewMemStorage()
 	service := ethereum_parser.NewService(&repo, ethereumClient, newSub)
-	h := ethereum_parser.NewHandlers(service)
+	h := ethereum_parser.NewHTTPHandlers(&service)
 
 	// Wiring up API
-	mux := http.NewServeMux()
-	mux.HandleFunc("/subscribe", h.Subscribe)
-	mux.HandleFunc("/getCurrentBlock", h.GetCurrentBlock)
-	mux.HandleFunc("/getTransactions", h.GetTransactions)
+	mux := ethereum_parser.CreateAPIMux(h)
 
 	// Starting HTTP server
 	srv := http.Server{
