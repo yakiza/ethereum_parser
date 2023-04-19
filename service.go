@@ -22,7 +22,7 @@ func (s *service) GetCurrentBlock(ctx context.Context) (int64, error) {
 	}
 
 	if currentBlock == 0 {
-		block, err := s.ethClient.GetCurrentBlock(ctx, 1)
+		block, err := s.ethClient.GetCurrentBlock(ctx, ID)
 		if err != nil {
 			return 0, err
 		}

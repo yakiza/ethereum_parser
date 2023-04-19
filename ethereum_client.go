@@ -75,7 +75,7 @@ func (c EthereumClient) GetCurrentBlock(ctx context.Context, id int) (int64, err
 }
 
 func (c EthereumClient) GetBlockBlockByNumber(ctx context.Context, number int64) (Block, error) {
-	body, err := json.Marshal(requestBody{JsonRPC: c.jsonRPC, EthereumMethod: getBlocksByNumber, Params: []interface{}{"0x104a015", true}, ID: ID})
+	body, err := json.Marshal(requestBody{JsonRPC: c.jsonRPC, EthereumMethod: getBlocksByNumber, Params: []interface{}{number, true}, ID: ID})
 	if err != nil {
 		return Block{}, fmt.Errorf("failed to marshal request body: %v", err)
 	}

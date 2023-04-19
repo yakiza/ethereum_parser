@@ -34,5 +34,5 @@ const (
 	getBlocksByNumber = "eth_getBlockByNumber"
 
 	// ID Not sure about the ID, so I have left it as a const here
-	ID = 5
+	ID = 1 
 )
