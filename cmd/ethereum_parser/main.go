@@ -85,8 +85,6 @@ func main() {
 	switch s := <-signalCh; s {
 	case syscall.SIGTERM:
 		log.Println("Terminating gracefully.")
-		wg.Done()
-		wg.Done()
 		if err := srv.Shutdown(context.Background()); err != http.ErrServerClosed {
 			log.Println("Failed to shutdown server:", err)
 		}
