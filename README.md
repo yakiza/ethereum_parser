@@ -46,3 +46,9 @@ Retrieves all the parsed transactions for the given address
 ```go
    localhost:8080/getTransactions?address{address_goes_here}
 ```
+## Testing
+
+you run the test using the Makefile
+test has been added for the api and the ethClient at a basic level so it showcases, more tests would be added as well as test for every service something that is not included in this take home assignment
+
+    make test
