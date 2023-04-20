@@ -61,7 +61,7 @@ func (p ParserService) Parse(ctx context.Context, newSub chan bool, wg *sync.Wai
 
 // UnsyncedTransactions responsible for checking if each new transaction from current block is already processed or not
 func (p ParserService) UnsyncedTransactions(ctx context.Context) ([]Transaction, error) {
-	currentRemoteBlock, err := p.client.GetCurrentBlock(ctx, 1)
+	currentRemoteBlock, err := p.client.GetCurrentBlock(ctx)
 	if err != nil {
 		return nil, nil
 	}

@@ -11,7 +11,7 @@ import (
 func TestEthereumClient_GetCurrentBlock(t *testing.T) {
 	client := eth.NewEthereumClient(eth.EthereumClientConfig{Addr: addr, JsonRPC: ver})
 
-	block, err := client.GetCurrentBlock(context.Background(), eth.ID)
+	block, err := client.GetCurrentBlock(context.Background())
 	assert.NoError(t, err)
 	assert.Greater(t, block, int64(0))
 }

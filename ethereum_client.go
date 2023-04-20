@@ -23,75 +23,22 @@ type EthereumClientConfig struct {
 	JsonRPC string `env:"JSON_RPC" envDefault:"2.0"`
 }
 
-// There is some repetition we can create a doer that executes the request and passes on the response body for further processing by each method.
-
-func (c EthereumClient) GetCurrentBlock(ctx context.Context, id int) (int64, error) {
-	reqBody, err := json.Marshal(requestBody{JsonRPC: c.jsonRPC, EthereumMethod: blockNumber, Params: []interface{}{}, ID: id})
+func (c EthereumClient) call(ctx context.Context, method string, params []interface{}, v interface{}) error {
+	body, err := json.Marshal(requestBody{JsonRPC: c.jsonRPC, EthereumMethod: method, Params: params, ID: ID})
 	if err != nil {
-		return 0, fmt.Errorf("failed to marshal request body: %v", err)
-	}
-
-	request, err := http.NewRequestWithContext(ctx, http.MethodPost, c.rootUrl, bytes.NewReader(reqBody))
-	if err != nil {
-		return 0, err
-	}
-
-	request.Header.Add("Content-Type", "application/json")
-
-	// SENDING
-	response, err := c.client.Do(request)
-	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		_ = response.Body.Close()
-	}()
-
-	respBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		return 0, fmt.Errorf("failed to read response body: %v", err)
-	}
-
-	var result responseBody
-	switch response.StatusCode {
-	case http.StatusOK:
-
-		err := json.NewDecoder(response.Body).Decode(&result)
-		if err = json.Unmarshal(respBody, &result); err != nil {
-			return 0, fmt.Errorf("failed to umarshal response body: %v", err)
-		}
-
-		var currentBlock string
-		if err = json.Unmarshal([]byte(result.Result), &currentBlock); err != nil {
-			return 0, fmt.Errorf("failed to unmarshal response body: %v", err)
-
-		}
-		quantity, err := hexDecoder(currentBlock)
-		if err != nil {
-			return 0, err
-		}
-		return quantity, nil
-	default:
-		return 0, fmt.Errorf("there was an error with the resuqest")
-	}
-}
-
-func (c EthereumClient) GetBlockByNumber(ctx context.Context, number int64) (Block, error) {
-	body, err := json.Marshal(requestBody{JsonRPC: c.jsonRPC, EthereumMethod: getBlocksByNumber, Params: []interface{}{hexEndcoder(number), true}, ID: ID})
-	if err != nil {
-		return Block{}, fmt.Errorf("failed to marshal request body: %v", err)
+		return fmt.Errorf("failed to marshal request body: %v", err)
 	}
 
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, c.rootUrl, bytes.NewReader(body))
 	if err != nil {
-		return Block{}, err
+		return err
 	}
 
 	request.Header.Add("Content-Type", "application/json")
 
 	response, err := c.client.Do(request)
 	if err != nil {
-		return Block{}, err
+		return err
 	}
 	defer func() {
 		_ = response.Body.Close()
@@ -99,26 +46,47 @@ func (c EthereumClient) GetBlockByNumber(ctx context.Context, number int64) (Blo
 
 	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return Block{}, err
+		return err
 	}
 
-	var result Block
 	switch response.StatusCode {
 	case http.StatusOK:
 		var respBody responseBody
 		// unmarshalling response and result from ethereum api
 		if err = json.Unmarshal(bodyBytes, &respBody); err != nil {
-			return Block{}, fmt.Errorf("failed to unmarshaling the response body: %v", err)
+			return fmt.Errorf("failed to unmarshal the response body: %v", err)
 		}
 
-		if err = json.Unmarshal([]byte(respBody.Result), &result); err != nil {
-			return Block{}, fmt.Errorf("failed to unmarshal the response body: %v", err)
+		if err = json.Unmarshal([]byte(respBody.Result), &v); err != nil {
+			return fmt.Errorf("failed to unmarshal the response body: %v", err)
 		}
 
-		return result, nil
+		return nil
 	default:
-		return Block{}, fmt.Errorf("there was an error with the resuqest")
+		return fmt.Errorf("there was an error with the request")
 	}
+}
+
+func (c EthereumClient) GetCurrentBlock(ctx context.Context) (int64, error) {
+	var currentBlock string
+	err := c.call(ctx, blockNumber, []interface{}{}, &currentBlock)
+	if err != nil {
+		return 0, err
+	}
+	quantity, err := hexDecoder(currentBlock)
+	if err != nil {
+		return 0, err
+	}
+	return quantity, nil
+}
+
+func (c EthereumClient) GetBlockByNumber(ctx context.Context, number int64) (Block, error) {
+	var result Block
+	err := c.call(ctx, getBlocksByNumber, []interface{}{hexEndcoder(number), true}, &result)
+	if err != nil {
+		return Block{}, err
+	}
+	return result, nil
 }
 
 func NewEthereumClient(config EthereumClientConfig) EthereumClient {
@@ -145,8 +113,8 @@ func hexEndcoder(decValue int64) string {
 
 type ethereumClient interface {
 	// GetCurrentBlock retrieves the number of the most recent block
-	GetCurrentBlock(ctx context.Context, id int) (int64, error)
+	GetCurrentBlock(ctx context.Context) (int64, error)
 
-	// GetBlockBlockByNumber GetBlockByNumber returns information about a block by block number.
+	// GetBlockByNumber returns information about a block by block number.
 	GetBlockByNumber(ctx context.Context, number int64) (Block, error)
 }
