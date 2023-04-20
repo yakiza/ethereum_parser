@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// Implementing a simple test that retrieves the current block ( not a test suite this time) just to showcase use of different types
+// Implementing table-testing as well as simple test case to showcase different types ( test suit on api_test.go)
 func TestEthereumClient_GetCurrentBlock(t *testing.T) {
 	client := eth.NewEthereumClient(eth.EthereumClientConfig{Addr: addr, JsonRPC: ver})
 
