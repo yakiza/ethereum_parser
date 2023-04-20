@@ -64,8 +64,8 @@ func NewHTTPHandlers(service Service) HttpHandlers {
 func CreateAPIMux(h HttpHandlers) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/subscribe", h.Subscribe)
-	mux.HandleFunc("/getCurrentBlock", h.GetCurrentBlock)
-	mux.HandleFunc("/getTransactions", h.GetTransactions)
+	mux.HandleFunc("/currentBlock", h.GetCurrentBlock)
+	mux.HandleFunc("/transactions", h.GetTransactions)
 
 	return mux
 }

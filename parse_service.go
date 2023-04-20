@@ -66,7 +66,7 @@ func (p ParserService) UnsyncedTransactions(ctx context.Context) ([]Transaction,
 		return nil, nil
 	}
 
-	blockTransactions, err := p.client.GetBlockBlockByNumber(ctx, currentRemoteBlock)
+	blockTransactions, err := p.client.GetBlockByNumber(ctx, currentRemoteBlock)
 	if err != nil {
 		return nil, err
 	}

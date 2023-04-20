@@ -35,7 +35,7 @@ localhost is used below but if you run it from docker please replace with the ap
 
 Retrieving the current block that has been parsed or if there is no block at all parsed (first time run) it fetches it
 ```go
-    localhost:8080/getCurrentBlock 
+    localhost:8080/currentBlock 
 ```
 
 Adds the address provided in the subscribers list
@@ -44,7 +44,7 @@ Adds the address provided in the subscribers list
 ```
 Retrieves all the parsed transactions for the given address
 ```go
-   localhost:8080/getTransactions?address{address_goes_here}
+   localhost:8080/transactions?address{address_goes_here}
 ```
 ## Testing
 

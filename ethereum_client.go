@@ -55,6 +55,8 @@ func (c EthereumClient) GetCurrentBlock(ctx context.Context, id int) (int64, err
 	var result responseBody
 	switch response.StatusCode {
 	case http.StatusOK:
+
+		err := json.NewDecoder(response.Body).Decode(&result)
 		if err = json.Unmarshal(respBody, &result); err != nil {
 			return 0, fmt.Errorf("failed to umarshal response body: %v", err)
 		}
@@ -74,8 +76,8 @@ func (c EthereumClient) GetCurrentBlock(ctx context.Context, id int) (int64, err
 	}
 }
 
-func (c EthereumClient) GetBlockBlockByNumber(ctx context.Context, number int64) (Block, error) {
-	body, err := json.Marshal(requestBody{JsonRPC: c.jsonRPC, EthereumMethod: getBlocksByNumber, Params: []interface{}{number, true}, ID: ID})
+func (c EthereumClient) GetBlockByNumber(ctx context.Context, number int64) (Block, error) {
+	body, err := json.Marshal(requestBody{JsonRPC: c.jsonRPC, EthereumMethod: getBlocksByNumber, Params: []interface{}{hexEndcoder(number), true}, ID: ID})
 	if err != nil {
 		return Block{}, fmt.Errorf("failed to marshal request body: %v", err)
 	}
@@ -137,10 +139,14 @@ func hexDecoder(hexValue string) (int64, error) {
 	return intValue, nil
 }
 
+func hexEndcoder(decValue int64) string {
+	return fmt.Sprintf("0x%X", decValue)
+}
+
 type ethereumClient interface {
 	// GetCurrentBlock retrieves the number of the most recent block
 	GetCurrentBlock(ctx context.Context, id int) (int64, error)
 
 	// GetBlockBlockByNumber GetBlockByNumber returns information about a block by block number.
-	GetBlockBlockByNumber(ctx context.Context, number int64) (Block, error)
+	GetBlockByNumber(ctx context.Context, number int64) (Block, error)
 }

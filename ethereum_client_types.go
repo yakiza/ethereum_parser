@@ -6,7 +6,7 @@ type requestBody struct {
 	JsonRPC        string        `json:"jsonrpc"`
 	EthereumMethod string        `json:"method"`
 	Params         []interface{} `json:"params"`
-	ID             int           `json:"ID"`
+	ID             int           `json:"id"`
 }
 
 type responseBody struct {
@@ -34,5 +34,5 @@ const (
 	getBlocksByNumber = "eth_getBlockByNumber"
 
 	// ID Not sure about the ID, so I have left it as a const here
-	ID = 1 
+	ID = 1
 )

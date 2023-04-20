@@ -19,3 +19,5 @@ vendor/
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
+.idea/vcs.xml
+.iml
